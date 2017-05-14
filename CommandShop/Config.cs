@@ -28,6 +28,8 @@ namespace CommandShop
     public string Name { get; set; }
     public string PurchasePermission { get; set; } = "commandshop.buy";
 
+    public bool RunAsServer { get; set; } = true;
+
     public long Price { get; set; }
 
     public List<string> CommandsToExecute { get; set; }

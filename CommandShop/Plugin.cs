@@ -171,8 +171,9 @@ namespace CommandShop
           .Replace("${manaMax}", player.TPlayer.statMana.ToString())
           .ToString();
 
+        var executor = item.RunAsServer ? TSPlayer.Server : new TSPlayer(player.Index) {Group = new SuperAdminGroup()};
 
-        if (!Commands.HandleCommand(TSPlayer.Server, fullcmd))
+        if (!Commands.HandleCommand(executor, fullcmd))
           player.SendErrorMessage(
             "There has been an error purchasing {0}. Please check with the server admins.", item.Name
           );
