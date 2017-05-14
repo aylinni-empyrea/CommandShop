@@ -9,6 +9,7 @@ using CurrencyBank;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
+using TShockAPI.Hooks;
 using Commands = TShockAPI.Commands;
 
 namespace CommandShop
@@ -30,13 +31,18 @@ namespace CommandShop
       Config.Current = JsonConfig.Read<Config>(Path.Combine(TShock.SavePath, "CommandShop.json"));
 
       ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInitialize);
+      GeneralHooks.ReloadEvent += OnReload;
     }
+
+    private static void OnReload(ReloadEventArgs reloadEventArgs)
+      => Config.Current = JsonConfig.Read<Config>(Path.Combine(TShock.SavePath, "CommandShop.json"));
 
     protected override void Dispose(bool disposing)
     {
       Config.Current = null;
 
       ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInitialize);
+      GeneralHooks.ReloadEvent -= OnReload;
 
       base.Dispose(disposing);
     }
