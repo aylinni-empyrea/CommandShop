@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CommandShop")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Allows purchase of commands with CurrencyBank.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CommandShop")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Newy")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
