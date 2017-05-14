@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ConfigStore
 {
   /// <summary>
-  /// Allows resolving of abstract class members.
+  ///   Allows resolving of abstract class members.
   /// </summary>
   /// <typeparam name="T">Abstract class where child classes are based of.</typeparam>
   public abstract class AbstractJsonConverter<T> : JsonConverter
   {
     protected abstract T Create(Type objectType, JObject jObject);
 
-    public override bool CanConvert(Type objectType) => typeof(T).IsAssignableFrom(objectType);
+    public override bool CanConvert(Type objectType)
+    {
+      return typeof(T).IsAssignableFrom(objectType);
+    }
 
     public override object ReadJson(
       JsonReader reader,
@@ -54,11 +56,21 @@ namespace ConfigStore
   }
 
   /// <summary>
-  /// Class for simple de/serialization of a class to a json file.
+  ///   Class for simple de/serialization of a class to a json file.
   /// </summary>
   public abstract class JsonConfig : IConfig
   {
     private static readonly object _syncRoot = new object();
+
+    [JsonConstructor]
+    protected JsonConfig()
+    {
+    }
+
+    protected JsonConfig(string savePath) : this()
+    {
+      SavePath = savePath;
+    }
 
     public static JsonSerializerSettings SerializerSettings { get; }
       = new JsonSerializerSettings
@@ -71,15 +83,15 @@ namespace ConfigStore
     [JsonIgnore]
     public string SavePath { get; protected set; }
 
-    [JsonConstructor]
-    protected JsonConfig()
+    public void Write()
     {
+      Write(SerializerSettings);
     }
 
-    protected JsonConfig(string savePath) : this() => SavePath = savePath;
-
     public static T Read<T>(string path) where T : IConfig, new()
-      => Read<T>(path, SerializerSettings);
+    {
+      return Read<T>(path, SerializerSettings);
+    }
 
     public static T Read<T>(string path, JsonSerializerSettings settings) where T : IConfig, new()
     {
@@ -110,18 +122,23 @@ namespace ConfigStore
       }
     }
 
-    public void Write() => Write(SerializerSettings);
-
     public void Write(JsonSerializerSettings settings)
     {
       lock (_syncRoot)
+      {
         File.WriteAllText(SavePath, Serialize(settings));
+      }
     }
 
-    public string Serialize(JsonSerializerSettings settings) =>
-      JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+    public string Serialize(JsonSerializerSettings settings)
+    {
+      return JsonConvert.SerializeObject(this, Formatting.Indented, settings);
+    }
 
-    public string Serialize() => Serialize(SerializerSettings);
+    public string Serialize()
+    {
+      return Serialize(SerializerSettings);
+    }
   }
 
   public class ExampleConfig : JsonConfig

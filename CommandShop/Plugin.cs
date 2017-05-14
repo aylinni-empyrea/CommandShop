@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,14 +16,21 @@ namespace CommandShop
   [ApiVersion(2, 1)]
   public class Plugin : TerrariaPlugin
   {
-    public override string Name => "CommandShop";
-    public override string Author => "Newy";
-    public override string Description => "Allows purchase of commands with CurrencyBank.";
-    public override Version Version => typeof(Plugin).Assembly.GetName().Version;
+    private static readonly string[] HelpText =
+    {
+      "/cmdshop help: Show this message",
+      "/cmdshop list: List available items",
+      "/cmdshop buy <item>: Buy command"
+    };
 
     public Plugin(Main game) : base(game)
     {
     }
+
+    public override string Name => "CommandShop";
+    public override string Author => "Newy";
+    public override string Description => "Allows purchase of commands with CurrencyBank.";
+    public override Version Version => typeof(Plugin).Assembly.GetName().Version;
 
     public override void Initialize()
     {
@@ -35,7 +41,9 @@ namespace CommandShop
     }
 
     private static void OnReload(ReloadEventArgs reloadEventArgs)
-      => Config.Current = JsonConfig.Read<Config>(Path.Combine(TShock.SavePath, "CommandShop.json"));
+    {
+      Config.Current = JsonConfig.Read<Config>(Path.Combine(TShock.SavePath, "CommandShop.json"));
+    }
 
     protected override void Dispose(bool disposing)
     {
@@ -57,13 +65,6 @@ namespace CommandShop
         }
       );
     }
-
-    private static readonly string[] HelpText =
-    {
-      "/cmdshop help: Show this message",
-      "/cmdshop list: List available items",
-      "/cmdshop buy <item>: Buy command"
-    };
 
     private static async void PurchaseCommand(CommandArgs args)
     {
@@ -172,11 +173,9 @@ namespace CommandShop
 
 
         if (!Commands.HandleCommand(TSPlayer.Server, fullcmd))
-        {
           player.SendErrorMessage(
             "There has been an error purchasing {0}. Please check with the server admins.", item.Name
           );
-        }
       }
     }
   }
