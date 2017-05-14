@@ -136,7 +136,7 @@ namespace CommandShop
         return;
       }
 
-      await BankMain.Bank.ChangeByAsync(args.Player.User.Name, account.Balance - item.Price);
+      await BankMain.Bank.ChangeByAsync(args.Player.User.Name, -item.Price);
 
       ExecuteCommands(item, args.Player);
       args.Player.SendSuccessMessage("Purchased command \"{0}\" for {1}.", item.Name, item.Price);
